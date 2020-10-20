@@ -1,12 +1,16 @@
 <div class="form-group">
   <label>Server Name</label>
-  <input
+<!--  <input-->
+<!--    type="text"-->
+<!--    class="form-control"-->
+<!--    (input)="onUpdateServer($event)"-->
+<!--    >-->
+    <input
     type="text"
     class="form-control"
-    (input)="onUpdateServer($event)"
+    [(ngModel)]="serverName"
     >
 </div>
-<p>{{ serverName }}</p>
 <button
   class="btn btn-primary mb-1"
   (click)="onCreateServer()"
