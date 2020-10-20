@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  displaySecret: boolean = false;
+  displaySecret: boolean = true;
   clicksLog: number[] = [];
 
   addToLog(): void {
