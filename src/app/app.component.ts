@@ -7,10 +7,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   displaySecret: boolean = true;
-  clicksLog: number[] = [];
+  clicksLog: Date[] = [];
 
   addToLog(): void {
     this.displaySecret = !this.displaySecret;
-    this.clicksLog.push(this.clicksLog.length + 1);
+    this.clicksLog.push(new Date());
   }
 }

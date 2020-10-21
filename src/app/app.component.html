@@ -18,11 +18,11 @@
       <hr>
       <h4>Log:</h4>
       <p
-        *ngFor="let i of clicksLog"
-        [ngStyle]="{backgroundColor: i >= 5 ? 'blue' : 'transparent'}"
-        [ngClass]="{'white': i >= 5}"
+        *ngFor="let logItem of clicksLog; let i = index"
+        [ngStyle]="{backgroundColor: i >= 4 ? 'blue' : 'transparent'}"
+        [ngClass]="{'white': i >= 4}"
       >
-        {{ i }}
+        {{ logItem }}
       </p>
     </div>
   </div>
