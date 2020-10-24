@@ -1,3 +1,8 @@
 .container {
   margin-top: 30px;
 }
+
+.odd {
+  border: 1px solid #bf4172;
+  background-color: #ffe0eb;
+}
