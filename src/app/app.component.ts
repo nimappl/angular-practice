@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -8,67 +7,29 @@ import { Observable } from 'rxjs';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  genders = ['male', 'female'];
-  signupForm: FormGroup;
-  forbiddenUsernames = ['Chris', 'Anna'];
+  loadedPosts = [];
 
-  ngOnInit() {
-    this.signupForm = new FormGroup({
-      userData: new FormGroup({
-        username: new FormControl(null, [Validators.required, this.forbiddenNames.bind(this)]),
-        email: new FormControl(null, [Validators.required, Validators.email], this.forbiddenEmails)
-      }),
-      hobbies: new FormArray([]),
-      gender: new FormControl('male')
-    });
+  constructor(private http: HttpClient) {}
 
-    this.signupForm.valueChanges.subscribe(value => {
-      console.log(value);
-    });
-    this.signupForm.statusChanges.subscribe(status => {
-      console.log(status);
-    });
+  ngOnInit() {}
 
-    this.signupForm.setValue({
-      userData: {
-        username: 'Max',
-        email: 'max@test.com',
-      },
-      hobbies: [],
-      gender: 'male'
-    });
-    this.signupForm.patchValue({
-      userData: {
-        username: 'Anna',
-      }
-    });
+  onCreatePost(postData: { title: string; content: string }) {
+    // Send Http request
+    this.http
+      .post(
+        'https://ng-complete-guide-c56d3.firebaseio.com/posts.json',
+        postData
+      )
+      .subscribe(responseData => {
+        console.log(responseData);
+      });
   }
 
-  onAddHobby() {
-    const control = new FormControl(null, Validators.required);
-    (this.signupForm.get('hobbies') as FormArray).push(control);
+  onFetchPosts() {
+    // Send Http request
   }
 
-  onSubmit() {
-    console.log(this.signupForm);
-    this.signupForm.reset();
-  }
-
-  forbiddenNames(control: FormControl): {[s: string]: boolean} {
-    if (this.forbiddenUsernames.indexOf(control.value) !== -1)
-      return {nameIsForbidden: true};
-    return null;
-  }
-
-  forbiddenEmails(control: FormControl): Promise<any> | Observable<any> {
-    const promise = new Promise<any>((resolve, reject) => {
-      setTimeout(() => {
-        if (control.value === 'test@test.com')
-          resolve({emailIsForbidden: true});
-        else
-          resolve(null);
-      }, 1500);
-    });
-    return promise;
+  onClearPosts() {
+    // Send Http request
   }
 }

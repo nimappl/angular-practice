@@ -2,15 +2,6 @@
   margin-top: 30px;
 }
 
-.ng-invalid.ng-touched {
-  border-color: tomato;
-}
-
-input.ng-invalid.ng-touched::placeholder {
-  color: lightsalmon;
-}
-
-input.ng-pending {
-  background: url('../assets/spinner-24px.svg') no-repeat right center;
-  background-origin: content-box;
+.row {
+  margin: 20px 0;
 }
