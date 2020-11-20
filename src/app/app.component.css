@@ -5,3 +5,17 @@
 .row {
   margin: 20px 0;
 }
+
+.loading {
+  font-size: 2rem;
+  font-style: italic;
+  color: #777;
+}
+
+.loading span {
+  vertical-align: middle;
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background: url('../assets/spinner-24px.svg') right center no-repeat; 
+}
