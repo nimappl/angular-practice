@@ -1,58 +1,66 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
 
 import { Post } from './post.model';
+import { PostsService } from './posts.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
-  
+export class AppComponent implements OnInit, OnDestroy {
+
   loadedPosts: Post[] = [];
   isFetching = false;
+  error = null;
+  errorSub: Subscription;
+  @ViewChild('postForm', {static: false}) form: NgForm;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,
+              private postsService: PostsService) { }
 
   ngOnInit() {
     this.fetchPosts();
+    this.errorSub = this.postsService.error.subscribe(error => {
+      this.error = error;
+    });
   }
 
   onCreatePost(postData: Post) {
     // Send Http request
-    this.http.post<{name: string}>('https://angular-learn-c3f02.firebaseio.com/posts.json', postData)
-    .subscribe(responseData => {
-      console.log(responseData);
-    });
+    this.postsService.createAndStorePosts(postData.title, postData.content);
+    this.fetchPosts();
+    this.form.reset();
   }
 
   onFetchPosts() {
     // Send Http request
     this.fetchPosts();
+    
   }
 
   onClearPosts() {
     // Send Http request
+    console.log('Method works');
+    this.postsService.deletePosts().subscribe(() => {
+      this.loadedPosts = [];
+    });
   }
 
   private fetchPosts() {
     this.isFetching = true;
-    this.http
-      .get<{[key: string]: Post}>('https://angular-learn-c3f02.firebaseio.com/posts.json')
-      .pipe(map(responseData => {
-        const postsArray: Post[] = [];
-        for (const key in responseData) {
-          if (responseData.hasOwnProperty(key)) {
-            postsArray.push({ ...responseData[key], id: key });
-          }
-        }
-        return postsArray;
-      }))
-      .subscribe(posts => {
-        this.isFetching = false;
-        this.loadedPosts = posts;
-      });
+    this.postsService.fetchPosts().subscribe(posts => {
+      this.isFetching = false
+      this.loadedPosts = posts;
+    }, error => {
+      this.error = error.message;
+    });
+  }
+
+  ngOnDestroy() {
+    this.errorSub.unsubscribe();
   }
 }
