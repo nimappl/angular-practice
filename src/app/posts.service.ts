@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { map } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { map, catchError } from 'rxjs/operators';
+import { Subject, throwError } from 'rxjs';
 
 import { Post } from './post.model';
 
@@ -15,7 +15,12 @@ export class PostsService {
   createAndStorePosts(title: string, content: string) {
     const postData: Post = { title: title, content: content };
 
-    this.http.post<{ name: string }>('https://angular-learn-c3f02.firebaseio.com/posts.json', postData)
+    this.http.post<{ name: string }>('https://angular-learn-c3f02.firebaseio.com/posts.json',
+        postData,
+        {
+          observe: 'response'
+        }
+      )
       .subscribe(responseData => {
         console.log(responseData);
       }, error => {
@@ -24,9 +29,21 @@ export class PostsService {
   }
 
   fetchPosts() {
+    let searchParams = new HttpParams();
+    searchParams = searchParams.append('print', 'pretty');
+    searchParams = searchParams.append('custom', 'key');
+
     return this.http
-      .get<{ [key: string]: Post }>('https://angular-learn-c3f02.firebaseio.com/posts.json')
-      .pipe(map(responseData => {
+      .get<{ [key: string]: Post }>(
+        'https://angular-learn-c3f02.firebaseio.com/posts.json',
+        {
+          headers: new HttpHeaders({'Custom-Header': 'Hello World'}),
+          // params: new HttpParams().set('print', 'pretty')
+          params: searchParams
+        }
+      )
+      .pipe(
+        map(responseData => {
         const postsArray: Post[] = [];
         for (const key in responseData) {
           if (responseData.hasOwnProperty(key)) {
@@ -34,7 +51,12 @@ export class PostsService {
           }
         }
         return postsArray;
-      }));
+        }),
+        catchError(errorRes => {
+          // Send to analytics server
+          return throwError(errorRes);
+        })
+      );
   }
 
   deletePosts() {

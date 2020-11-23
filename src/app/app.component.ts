@@ -44,10 +44,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   onClearPosts() {
     // Send Http request
-    console.log('Method works');
     this.postsService.deletePosts().subscribe(() => {
       this.loadedPosts = [];
     });
+  }
+
+  onHandleError() {
+    this.error = null;
+    this.isFetching = false;
   }
 
   private fetchPosts() {
